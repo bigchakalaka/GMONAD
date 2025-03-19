@@ -38,15 +38,4 @@ The contract also allows the owner to withdraw the entire pot at any time and in
    - 0.2 TMON is instantly transferred to the owner’s wallet.
    - 0.8 TMON is added to the pot.
 4. **Winning the Pot**: Each message has a 1% chance (randomly determined) to win the entire pot, which is then transferred to the sender.
-5. **Owner Withdrawal**: The owner can call `withdrawPot` to take all funds in the pot.
-
-## Prerequisites
-- [Solidity](https://soliditylang.org/) `^0.8.0`
-- [Ethereum Development Environment](https://hardhat.org/ or https://remix.ethereum.org/)
-- An Ethereum wallet (e.g., MetaMask) with Ether for testing on a testnet.
-
-## Installation & Deployment
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
+5. **Owner Withdrawal**: The owner can call `withdrawPot` to take all funds in the pot (will be removed after testing)
