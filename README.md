@@ -1,5 +1,8 @@
 # GMONAD MessageBoard
 
+![image (1)](https://github.com/user-attachments/assets/b9fbf9e9-03d6-4922-acb5-a9a05e0f0917)
+
+
 ## Overview
 `MessageBoard` is a decentralized application (dApp) built on Ethereum, allowing users to post messages on-chain by paying a fee of 1 TMON (a fictional token represented as 1 Ether in this contract). The contract distributes the fee as follows:
 - **20% (0.2 TMON)** goes directly to the contract owner (the deployer) with each message.
