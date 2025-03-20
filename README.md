@@ -38,7 +38,7 @@ The contract also allows the owner to withdraw the entire pot at any time and in
 1. **Deployment**: The contract is deployed by an owner, who receives 0.02 TMON per message posted.
 2. **Posting Messages**: Users call `postMessage` with 0.1 TMON, storing their message on-chain.
 3. **Fee Split**: 
-   - 0.2 TMON is instantly transferred to the owner’s wallet.
-   - 0.8 TMON is added to the pot.
+   - 0.02 TMON is instantly transferred to the owner’s wallet.
+   - 0.08 TMON is added to the pot.
 4. **Winning the Pot**: Each message has a 1% chance (randomly determined) to win the entire pot, which is then transferred to the sender.
 5. **Owner Withdrawal**: The owner can call `withdrawPot` to take all funds in the pot (will be removed after testing)
