@@ -1,7 +1,7 @@
 # GMONAD MessageBoard
-[![image (111)](https://github.com/user-attachments/assets/4ded2af5-ca4f-4c19-b35f-7cf2e72e6a3d)](https://www.gmonad.infinityfreeapp.com/)
+[![image (111)](https://github.com/user-attachments/assets/4ded2af5-ca4f-4c19-b35f-7cf2e72e6a3d)](https://g-monad.fun)
 
-https://www.gmonad.infinityfreeapp.com/
+https://g-monad.fun
 
 ## Overview
 `MessageBoard` is a decentralized application (dApp) built on Monad Testnet, allowing users to post messages on-chain by paying a fee of 0.1 TMON. The contract distributes the fee as follows:
