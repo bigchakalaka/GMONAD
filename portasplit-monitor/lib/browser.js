@@ -7,12 +7,20 @@ const { log } = require('./logger');
 // Instance Chromium unique et partagee, relancee automatiquement si elle meurt.
 let browser = null;
 let launching = null;
+let userAgents = null; // construits dynamiquement une fois la version Chromium connue
 
-const USER_AGENTS = [
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-];
+// Le User-Agent DOIT correspondre a la vraie version de Chromium installee :
+// un decalage (ex. UA "Chrome/124" alors que le moteur est en 149) est un
+// signal classique de detection anti-bot (fingerprinting cote serveur).
+function buildUserAgents(fullVersion) {
+  const major = (fullVersion || '124.0.0.0').split('.')[0];
+  const v = `${major}.0.0.0`;
+  return [
+    `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${v} Safari/537.36`,
+    `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${v} Safari/537.36`,
+    `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${v} Safari/537.36`,
+  ];
+}
 
 async function getBrowser() {
   if (browser && browser.isConnected()) return browser;
@@ -33,8 +41,10 @@ async function getBrowser() {
       b.on('disconnected', () => {
         log('warn', 'browser', 'Chromium deconnecte, sera relance au prochain besoin');
         browser = null;
+        userAgents = null;
       });
-      log('info', 'browser', 'Chromium lance');
+      userAgents = buildUserAgents(b.version());
+      log('info', 'browser', `Chromium lance (v${b.version()})`);
       return b;
     })
     .catch((e) => {
@@ -51,7 +61,7 @@ async function getBrowser() {
  */
 async function withPage(fn) {
   const b = await getBrowser();
-  const ua = USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
+  const ua = userAgents[Math.floor(Math.random() * userAgents.length)];
   const context = await b.newContext({
     userAgent: ua,
     locale: 'fr-FR',

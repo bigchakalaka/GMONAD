@@ -80,9 +80,12 @@ module.exports = {
       id: 'ventigo',
       name: 'Ventigo',
       type: 'retailer',
-      url: 'https://www.ventigo.fr/recherche?controller=search&s=81002309', // ref indiquee dans la spec
+      // TODO 1er run : l'URL de recherche par ref donnait un 404 ; a resoudre
+      // manuellement (ouvrir le site, chercher "midea portasplit 12000",
+      // recuperer l'URL de la FICHE PRODUIT et la figer ici).
+      url: 'https://www.ventigo.fr/recherche?controller=search&s=' + encodeURIComponent('midea portasplit 12000'),
       enabled: true,
-      fiability: 'reliable',
+      fiability: 'best-effort',
     },
 
     // ── A resoudre au 1er run (module generique) : desactives par defaut ────
