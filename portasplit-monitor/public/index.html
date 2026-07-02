@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PortaSplit Monitor</title>
+  <style>
+    :root {
+      --bg: #0f1115; --panel: #171a21; --panel2: #1e222b; --border: #2a2f3a;
+      --txt: #e6e8ec; --muted: #8b93a1; --green: #35c46a; --red: #e4564a;
+      --grey: #7a828f; --accent: #4c8dff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--txt);
+      font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    header {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+      padding: 14px 20px; background: var(--panel); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 5;
+    }
+    h1 { font-size: 16px; margin: 0; font-weight: 600; letter-spacing: .3px; }
+    h1 small { color: var(--muted); font-weight: 400; font-size: 12px; }
+    .banner { display: flex; align-items: center; gap: 18px; margin-left: auto; flex-wrap: wrap; }
+    .stat { font-size: 13px; color: var(--muted); }
+    .stat b { color: var(--txt); font-size: 15px; }
+    .stat .in { color: var(--green); }
+    button {
+      background: var(--accent); color: #fff; border: 0; border-radius: 6px;
+      padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    button:disabled { opacity: .5; cursor: default; }
+    main { padding: 18px 20px; max-width: 1200px; margin: 0 auto; }
+    .tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    th { background: var(--panel2); color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+    tr:last-child td { border-bottom: 0; }
+    tr:hover td { background: #191d25; }
+    .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 7px; vertical-align: middle; }
+    .dot.in_stock { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .dot.out_of_stock { background: var(--red); }
+    .dot.unknown { background: var(--grey); }
+    .status-in_stock { color: var(--green); font-weight: 600; }
+    .status-out_of_stock { color: var(--red); }
+    .status-unknown { color: var(--grey); }
+    td.detail { color: var(--muted); font-size: 12px; max-width: 260px; overflow: hidden; text-overflow: ellipsis; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .tag { font-size: 10px; color: var(--muted); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; margin-left: 6px; }
+    .chartbox { margin-top: 22px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+    .chartbox h2 { font-size: 13px; margin: 0 0 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+    .barrow { display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .barrow .lbl { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .track { display: flex; height: 12px; border-radius: 3px; overflow: hidden; background: #0b0d11; }
+    .track span { height: 100%; }
+    .track .in_stock { background: var(--green); }
+    .track .out_of_stock { background: var(--red); }
+    .track .unknown { background: #3a3f4a; }
+    .legend { font-size: 11px; color: var(--muted); margin-top: 10px; }
+    .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin: 0 4px 0 12px; vertical-align: middle; }
+    footer { text-align: center; color: var(--muted); font-size: 11px; padding: 16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PortaSplit Monitor <small id="ref"></small></h1>
+    <div class="banner">
+      <div class="stat"><b class="in" id="inStock">–</b><span> / </span><b id="total">–</b> en stock</div>
+      <div class="stat">Dernier cycle : <b id="lastCycle">–</b></div>
+      <button id="checkBtn">Vérifier maintenant</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Site</th><th>Statut</th><th>Prix</th>
+            <th>Dernière vérif</th><th>Dernier changement</th><th>Détail</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="rows"><tr><td colspan="7">Chargement…</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="chartbox">
+      <h2>Historique 24 h</h2>
+      <div id="chart"><div style="color:var(--muted);font-size:12px">Chargement…</div></div>
+      <div class="legend">
+        <i style="background:var(--green)"></i>en stock
+        <i style="background:var(--red)"></i>rupture
+        <i style="background:#3a3f4a"></i>inconnu / sans donnée
+      </div>
+    </div>
+  </main>
+
+  <footer>Auto-refresh 30 s · fuseau <span id="tz">Europe/Paris</span></footer>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let tz = 'Europe/Paris';
+
+    function fmt(iso) {
+      if (!iso) return '–';
+      try { return new Date(iso).toLocaleString('fr-FR', { timeZone: tz, dateStyle: 'short', timeStyle: 'medium' }); }
+      catch { return iso; }
+    }
+    const esc = (s) => (s == null ? '' : String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])));
+
+    async function loadState() {
+      try {
+        const r = await fetch('/api/state'); const d = await r.json();
+        tz = d.timezone || tz; $('tz').textContent = tz;
+        if (d.productRef) $('ref').textContent = d.productRef;
+        const sites = d.sites || [];
+        $('total').textContent = sites.length;
+        $('inStock').textContent = sites.filter((s) => s.status === 'in_stock').length;
+        $('lastCycle').textContent = fmt(d.lastCycleAt);
+        $('checkBtn').disabled = !!d.cycleInProgress;
+        $('checkBtn').textContent = d.cycleInProgress ? 'Cycle en cours…' : 'Vérifier maintenant';
+
+        $('rows').innerHTML = sites.map((s) => `
+          <tr>
+            <td>${esc(s.name)}${s.status === 'unknown' && s.alerted_broken ? '<span class="tag">⚠ scraper</span>' : ''}</td>
+            <td><span class="dot ${s.status}"></span><span class="status-${s.status}">${s.status}</span></td>
+            <td>${esc(s.price) || '–'}</td>
+            <td>${fmt(s.last_check)}</td>
+            <td>${fmt(s.last_change)}</td>
+            <td class="detail" title="${esc(s.detail)}">${esc(s.detail) || ''}</td>
+            <td>${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">fiche ↗</a>` : ''}</td>
+          </tr>`).join('') || '<tr><td colspan="7">Aucun site.</td></tr>';
+      } catch (e) {
+        $('rows').innerHTML = `<tr><td colspan="7">Erreur de chargement : ${esc(e.message)}</td></tr>`;
+      }
+    }
+
+    // Timeline SVG-less : une barre par site, segments proportionnels au temps
+    // passe dans chaque etat sur les dernieres 24 h (lecture table history).
+    async function loadHistory() {
+      try {
+        const hours = 24;
+        const r = await fetch('/api/history?hours=' + hours);
+        const rows = await r.json();
+        const now = Date.now(), start = now - hours * 3600e3;
+        const bySite = {};
+        for (const h of rows) { (bySite[h.site] = bySite[h.site] || []).push(h); }
+        const sites = Object.keys(bySite).sort();
+        if (!sites.length) { $('chart').innerHTML = '<div style="color:var(--muted);font-size:12px">Pas encore de données.</div>'; return; }
+
+        $('chart').innerHTML = sites.map((site) => {
+          const evs = bySite[site].map((e) => ({ t: new Date(e.ts).getTime(), s: e.status })).sort((a, b) => a.t - b.t);
+          const segs = [];
+          let prevT = start, prevS = 'unknown';
+          for (const e of evs) {
+            const t = Math.max(e.t, start);
+            if (t > prevT) segs.push({ s: prevS, w: t - prevT });
+            prevS = e.s; prevT = t;
+          }
+          segs.push({ s: prevS, w: now - prevT });
+          const total = now - start;
+          const bar = segs.filter((x) => x.w > 0).map((x) => `<span class="${x.s}" style="width:${(x.w / total * 100).toFixed(3)}%"></span>`).join('');
+          return `<div class="barrow"><div class="lbl">${esc(site)}</div><div class="track">${bar}</div></div>`;
+        }).join('');
+      } catch (e) {
+        $('chart').innerHTML = `<div style="color:var(--muted);font-size:12px">Erreur historique : ${esc(e.message)}</div>`;
+      }
+    }
+
+    async function refresh() { await Promise.all([loadState(), loadHistory()]); }
+
+    $('checkBtn').addEventListener('click', async () => {
+      $('checkBtn').disabled = true; $('checkBtn').textContent = 'Déclenché…';
+      try { await fetch('/api/check-now', { method: 'POST' }); } catch {}
+      setTimeout(refresh, 1500);
+    });
+
+    refresh();
+    setInterval(refresh, 30000);
+  </script>
+</body>
+</html>

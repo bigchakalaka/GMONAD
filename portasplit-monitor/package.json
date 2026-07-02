@@ -1,0 +1,21 @@
+{
+  "name": "portasplit-monitor",
+  "version": "1.0.0",
+  "description": "Moniteur de disponibilite du Midea PortaSplit 12000 BTU (MMCS-12HRN8-QRD0) : scraping multi-sites, alertes Telegram, dashboard web.",
+  "main": "index.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "check": "node scripts/check-once.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "node-cron": "^3.0.3",
+    "playwright": "^1.47.0"
+  },
+  "license": "MIT"
+}
